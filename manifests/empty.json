@@ -1,0 +1,28 @@
+{
+  "core_commit": "9fb906bb7296212ff42fc95ff73a92aaf8554f0d",
+  "embedded_python": {
+    "allow_exec_by_default": false,
+    "enabled_by_default": false
+  },
+  "engine_commit": "700a4f75a2e550f17022665d7b5b009c24e46a40",
+  "features": [],
+  "playerbots_commit": "2f7d9f774987d0157c6a0d0cc08c40bec3db3945",
+  "release": "cpi223-empty-v1",
+  "schema": 2,
+  "source_contract": {
+    "authority_commit": "729504842db296c5230884d2ed64ec61c2549c3d",
+    "authority_issue": "CPI-225",
+    "authority_path": "research/cpi-225/cpi225-reconciled-disposition-20260903.json",
+    "engine_config_sha256": "a485df867fc7a8953cc7e37f034d0caef582922ffd6072fa4f9be7639fe8dcc3",
+    "engine_source_diff_sha256": "36994d26a8998f38bbaa39a806859675dfc31afe1618298912f1028dac6ed779",
+    "exact_tuple": {
+      "canonical_manifest_sha256": "1845582e8b3fa432840979cc467bbe7b884797ac25b60c6f5f118aef2f99995e",
+      "core": "9fb906bb7296212ff42fc95ff73a92aaf8554f0d",
+      "playerbots": "2f7d9f774987d0157c6a0d0cc08c40bec3db3945",
+      "python_engine": "700a4f75a2e550f17022665d7b5b009c24e46a40"
+    },
+    "release_surface_path": "research/evidence/cpi-225/cpi225-release-surface-20260903/release-surface.json",
+    "release_surface_sha256": "ac3ca5352da58dcdb53666466dc1bd2c5415c2b3e5fc3972cfbdcc499fd8f8d2",
+    "schema": 1
+  }
+}

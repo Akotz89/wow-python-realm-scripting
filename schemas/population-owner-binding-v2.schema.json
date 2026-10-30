@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-owner-binding-v2.schema.json",
+  "title": "Audited owner binding transition v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "authorized_wave_levels",
+    "binding_schema",
+    "binding_version",
+    "event_key",
+    "expected_generation",
+    "next_generation",
+    "operation",
+    "previous_owner_state",
+    "realm_id",
+    "resulting_owner_state",
+    "selected_owner",
+    "source_digests",
+    "transition_digest"
+  ],
+  "properties": {
+    "binding_schema": { "const": 2 },
+    "binding_version": { "$ref": "#/$defs/token" },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "transition_digest": { "$ref": "#/$defs/digest" },
+    "event_key": { "$ref": "#/$defs/digest" },
+    "operation": { "enum": ["bind", "rebind"] },
+    "expected_generation": { "type": "integer", "minimum": 1 },
+    "next_generation": { "type": "integer", "minimum": 2 },
+    "authorized_wave_levels": { "const": [] },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ambient_binding_digest", "installation_digest", "manifest_digest", "schedule_digest"],
+      "properties": {
+        "ambient_binding_digest": { "$ref": "#/$defs/digest" },
+        "installation_digest": { "$ref": "#/$defs/digest" },
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "schedule_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "previous_owner_state": { "$ref": "#/$defs/ownerState" },
+    "selected_owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_id", "actor", "character_guid", "resolution_evidence_digest", "selected_at_utc"],
+      "properties": {
+        "account_id": { "type": "integer", "minimum": 1 },
+        "actor": { "$ref": "#/$defs/token" },
+        "character_guid": { "type": "integer", "minimum": 1 },
+        "resolution_evidence_digest": { "$ref": "#/$defs/digest" },
+        "selected_at_utc": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?Z$"
+        }
+      }
+    },
+    "resulting_owner_state": {
+      "allOf": [
+        { "$ref": "#/$defs/ownerState" },
+        {
+          "properties": {
+            "binding_state": { "const": "bound" },
+            "owner_account_id": { "type": "integer", "minimum": 1 },
+            "owner_character_guid": { "type": "integer", "minimum": 1 }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+    "ownerState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_state",
+        "current_epoch",
+        "highest_owner_level_seen",
+        "owner_account_id",
+        "owner_character_guid"
+      ],
+      "properties": {
+        "binding_state": { "enum": ["unbound", "bound"] },
+        "current_epoch": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "highest_owner_level_seen": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "owner_account_id": { "type": ["integer", "null"], "minimum": 1 },
+        "owner_character_guid": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    }
+  }
+}

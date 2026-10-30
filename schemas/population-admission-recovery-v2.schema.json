@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-admission-recovery-v2.schema.json",
+  "title": "Owner-independent per-identity admission recovery v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "expected_identity",
+    "external_observation",
+    "ledger_observation",
+    "manifest_identity",
+    "realm_id",
+    "recovery_digest",
+    "recovery_schema",
+    "recovery_version",
+    "runtime_commit_required",
+    "source_digests"
+  ],
+  "properties": {
+    "recovery_schema": { "const": 2 },
+    "recovery_version": { "$ref": "population-admission-recovery-v1.schema.json#/$defs/token" },
+    "recovery_digest": { "$ref": "population-admission-recovery-v1.schema.json#/$defs/digest" },
+    "realm_id": { "$ref": "population-admission-recovery-v1.schema.json#/$defs/token" },
+    "manifest_identity": { "$ref": "population-admission-recovery-v1.schema.json#/$defs/token" },
+    "source_digests": {
+      "$ref": "population-admission-recovery-v1.schema.json#/properties/source_digests"
+    },
+    "expected_identity": {
+      "$ref": "population-admission-recovery-v1.schema.json#/properties/expected_identity"
+    },
+    "ledger_observation": {
+      "$ref": "population-admission-recovery-v1.schema.json#/properties/ledger_observation"
+    },
+    "external_observation": {
+      "$ref": "population-admission-recovery-v1.schema.json#/properties/external_observation"
+    },
+    "decision": {
+      "$ref": "population-admission-recovery-v1.schema.json#/properties/decision"
+    },
+    "runtime_commit_required": { "type": "boolean" }
+  }
+}

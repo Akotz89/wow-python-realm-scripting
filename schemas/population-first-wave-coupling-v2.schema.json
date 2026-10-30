@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-first-wave-coupling-v2.schema.json",
+  "title": "Population first-wave schedule, manifest, factory, and capacity coupling v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "capacity",
+    "coupling_digest",
+    "coupling_schema",
+    "coupling_version",
+    "equality",
+    "factory_contract",
+    "realm_id",
+    "result",
+    "source_digests",
+    "stage"
+  ],
+  "properties": {
+    "coupling_schema": { "const": 2 },
+    "coupling_version": { "$ref": "#/$defs/token" },
+    "coupling_digest": { "$ref": "#/$defs/digest" },
+    "stage": { "enum": ["prediction", "observation"] },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_digest", "manifest_digest", "schedule_digest"],
+      "properties": {
+        "binding_digest": {
+          "oneOf": [
+            { "$ref": "#/$defs/digest" },
+            { "type": "null" }
+          ]
+        },
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "schedule_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "factory_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "creation_level",
+        "creation_owner_level",
+        "creation_xp",
+        "cross_wave_account_packing",
+        "mode",
+        "one_account_per_character",
+        "runtime_identity_randomization_enabled",
+        "stock_bulk_factory_enabled"
+      ],
+      "properties": {
+        "mode": { "const": "exact_manifest_wave" },
+        "stock_bulk_factory_enabled": { "const": false },
+        "runtime_identity_randomization_enabled": { "const": false },
+        "creation_owner_level": { "const": 1 },
+        "creation_level": { "const": 1 },
+        "creation_xp": { "const": 0 },
+        "cross_wave_account_packing": { "const": false },
+        "one_account_per_character": { "const": true }
+      }
+    },
+    "equality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factory_observed_account_count",
+        "factory_observed_character_count",
+        "factory_predicted_account_count",
+        "factory_predicted_character_count",
+        "manifest_account_count",
+        "manifest_character_count",
+        "scheduled_character_count"
+      ],
+      "properties": {
+        "scheduled_character_count": { "type": "integer", "minimum": 1 },
+        "manifest_character_count": { "type": "integer", "minimum": 1 },
+        "manifest_account_count": { "type": "integer", "minimum": 1 },
+        "factory_predicted_character_count": { "type": "integer", "minimum": 1 },
+        "factory_predicted_account_count": { "type": "integer", "minimum": 1 },
+        "factory_observed_character_count": {
+          "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        },
+        "factory_observed_account_count": {
+          "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        }
+      }
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["initial_online_target", "measured_concurrent_capacity_ceiling"],
+      "properties": {
+        "initial_online_target": { "type": "integer", "minimum": 1 },
+        "measured_concurrent_capacity_ceiling": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "result": { "enum": ["PASS_PREDICTION", "PASS_OBSERVATION"] }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" }
+  }
+}

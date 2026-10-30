@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-admission-recovery-v1.schema.json",
+  "title": "Fresh-realm per-identity admission recovery v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "expected_identity",
+    "external_observation",
+    "ledger_observation",
+    "manifest_identity",
+    "realm_id",
+    "recovery_digest",
+    "recovery_schema",
+    "recovery_version",
+    "runtime_commit_required",
+    "source_digests"
+  ],
+  "properties": {
+    "recovery_schema": { "const": 1 },
+    "recovery_version": { "$ref": "#/$defs/token" },
+    "recovery_digest": { "$ref": "#/$defs/digest" },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "manifest_identity": { "$ref": "#/$defs/token" },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_digest", "reconciliation_digest", "snapshot_digest"],
+      "properties": {
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "reconciliation_digest": { "$ref": "#/$defs/digest" },
+        "snapshot_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "expected_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "account_manifest_size",
+        "account_name",
+        "appearance",
+        "character_name",
+        "class",
+        "creation_wave_owner_level",
+        "race",
+        "wave_idempotency_key",
+        "wave_ordinal"
+      ],
+      "properties": {
+        "account_manifest_size": { "type": "integer", "minimum": 1, "maximum": 9 },
+        "account_name": { "$ref": "#/$defs/token" },
+        "appearance": { "$ref": "#/$defs/expectedAppearance" },
+        "character_name": { "$ref": "#/$defs/token" },
+        "class": { "type": "integer", "minimum": 1, "maximum": 11 },
+        "creation_wave_owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "race": { "type": "integer", "minimum": 1, "maximum": 11 },
+        "wave_idempotency_key": { "$ref": "#/$defs/digest" },
+        "wave_ordinal": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "ledger_observation": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "account_id",
+            "character_guid",
+            "generation",
+            "manifest_digest",
+            "expected_identity",
+            "state",
+            "wave_idempotency_key"
+          ],
+          "properties": {
+            "account_id": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1 }] },
+            "character_guid": { "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1 }] },
+            "generation": { "type": "integer", "minimum": 1 },
+            "manifest_digest": { "$ref": "#/$defs/digest" },
+            "expected_identity": { "$ref": "#/properties/expected_identity" },
+            "state": { "$ref": "#/$defs/state" },
+            "wave_idempotency_key": { "$ref": "#/$defs/digest" }
+          }
+        }
+      ]
+    },
+    "external_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account", "character", "rndbot"],
+      "properties": {
+        "account": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["account_id", "account_name", "character_database_numchars", "realmcharacters_numchars", "realmcharacters_row_present"],
+              "properties": {
+                "account_id": { "type": "integer", "minimum": 1 },
+                "account_name": { "$ref": "#/$defs/token" },
+                "character_database_numchars": { "type": "integer", "minimum": 0, "maximum": 255 },
+                "realmcharacters_numchars": {
+                  "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 0, "maximum": 255 }]
+                },
+                "realmcharacters_row_present": { "type": "boolean" }
+              }
+            }
+          ]
+        },
+        "character": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "account_id",
+                "appearance",
+                "character_guid",
+                "character_name",
+                "class",
+                "level",
+                "level_time",
+                "quest_state",
+                "race",
+                "total_time",
+                "xp"
+              ],
+              "properties": {
+                "account_id": { "type": "integer", "minimum": 1 },
+                "appearance": { "$ref": "#/$defs/persistedAppearance" },
+                "character_guid": { "type": "integer", "minimum": 1 },
+                "character_name": { "$ref": "#/$defs/token" },
+                "class": { "type": "integer", "minimum": 1, "maximum": 11 },
+                "level": { "type": "integer", "minimum": 1, "maximum": 80 },
+                "level_time": { "type": "integer", "minimum": 0 },
+                "quest_state": { "$ref": "#/$defs/questState" },
+                "race": { "type": "integer", "minimum": 1, "maximum": 11 },
+                "total_time": { "type": "integer", "minimum": 0 },
+                "xp": { "type": "integer", "minimum": 0 }
+              }
+            }
+          ]
+        },
+        "rndbot": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["account_id", "account_type"],
+              "properties": {
+                "account_id": { "type": "integer", "minimum": 1 },
+                "account_type": { "type": "integer", "minimum": 0, "maximum": 2 }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "effect_domain",
+        "expected_generation",
+        "from_state",
+        "read_back_required",
+        "reason",
+        "resulting_generation",
+        "to_state"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "activate_identity",
+            "block_conflict",
+            "create_account",
+            "create_character",
+            "initialize_realmcharacters",
+            "install_rndbot_classification",
+            "mark_account_pending",
+            "mark_account_verified",
+            "mark_binding_verified",
+            "mark_character_pending",
+            "mark_character_verified",
+            "mark_rndbot_pending",
+            "noop_active",
+            "noop_blocked",
+            "refresh_realmcharacters_count",
+            "reserve_identity"
+          ]
+        },
+        "effect_domain": { "enum": ["character_database", "director_ledger", "login_database", "none", "playerbots_database"] },
+        "expected_generation": { "type": "integer", "minimum": 0 },
+        "from_state": { "oneOf": [{ "const": "absent" }, { "$ref": "#/$defs/state" }] },
+        "read_back_required": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/token" },
+        "resulting_generation": { "type": "integer", "minimum": 0 },
+        "to_state": { "$ref": "#/$defs/state" }
+      }
+    },
+    "runtime_commit_required": { "type": "boolean" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "expectedAppearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["face", "facial_hair", "gender", "hair_color", "hair_style", "outfit_id", "skin"],
+      "properties": {
+        "face": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "facial_hair": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "gender": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "hair_color": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "hair_style": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "outfit_id": { "const": 0 },
+        "skin": { "type": "integer", "minimum": 0, "maximum": 255 }
+      }
+    },
+    "persistedAppearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["face", "facial_hair", "gender", "hair_color", "hair_style", "skin"],
+      "properties": {
+        "face": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "facial_hair": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "gender": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "hair_color": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "hair_style": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "skin": { "type": "integer", "minimum": 0, "maximum": 255 }
+      }
+    },
+    "questState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["daily_count", "monthly_count", "rewarded_count", "seasonal_count", "status_count", "weekly_count"],
+      "properties": {
+        "daily_count": { "type": "integer", "minimum": 0 },
+        "monthly_count": { "type": "integer", "minimum": 0 },
+        "rewarded_count": { "type": "integer", "minimum": 0 },
+        "seasonal_count": { "type": "integer", "minimum": 0 },
+        "status_count": { "type": "integer", "minimum": 0 },
+        "weekly_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+    "state": {
+      "enum": [
+        "account_pending",
+        "account_verified",
+        "active",
+        "binding_verified",
+        "blocked_conflict",
+        "character_pending",
+        "character_verified",
+        "reserved",
+        "rndbot_pending"
+      ]
+    }
+  }
+}

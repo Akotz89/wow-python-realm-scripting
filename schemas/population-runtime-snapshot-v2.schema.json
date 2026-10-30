@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-runtime-snapshot-v2.schema.json",
+  "title": "Owner-independent population director runtime snapshot v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "band_capacity_epochs",
+    "bands",
+    "binding_count",
+    "capacity_limits",
+    "effective_ceiling_rule",
+    "failure_policy",
+    "global_phase_cap",
+    "manifest_identity_count",
+    "maximum_owner_level",
+    "permanent_roster_target",
+    "progression_hold",
+    "realm_id",
+    "snapshot_digest",
+    "snapshot_schema",
+    "snapshot_version",
+    "source_digests"
+  ],
+  "properties": {
+    "snapshot_schema": { "const": 2 },
+    "snapshot_version": { "$ref": "#/$defs/token" },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "snapshot_digest": { "$ref": "#/$defs/digest" },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_digest", "manifest_digest", "policy_digest", "schedule_digest"],
+      "properties": {
+        "binding_digest": { "$ref": "#/$defs/digest" },
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "policy_digest": { "$ref": "#/$defs/digest" },
+        "schedule_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "maximum_owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+    "permanent_roster_target": { "type": "integer", "minimum": 1 },
+    "manifest_identity_count": { "type": "integer", "minimum": 1 },
+    "binding_count": { "type": "integer", "minimum": 0 },
+    "global_phase_cap": { "type": "integer", "minimum": 1, "maximum": 80 },
+    "effective_ceiling_rule": { "const": "min(global_phase_cap,dynamic_band_ceiling)" },
+    "bands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ceiling", "name", "share"],
+        "properties": {
+          "name": { "$ref": "#/$defs/token" },
+          "share": { "type": "string", "pattern": "^(0|1|0\\.[0-9]+)$" },
+          "ceiling": { "type": "integer", "minimum": 1, "maximum": 80 }
+        }
+      }
+    },
+    "band_capacity_epochs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capacities", "owner_level", "scheduled_cumulative_population"],
+        "properties": {
+          "owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+          "scheduled_cumulative_population": { "type": "integer", "minimum": 0 },
+          "capacities": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "capacity_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "concurrent_active_target",
+        "creation_batch_size",
+        "login_batch_size",
+        "max_active_per_map",
+        "max_active_per_starting_region",
+        "max_active_per_zone",
+        "safety_reserve",
+        "server_session_budget"
+      ],
+      "properties": {
+        "server_session_budget": { "type": "integer", "minimum": 1 },
+        "safety_reserve": { "type": "integer", "minimum": 5 },
+        "concurrent_active_target": { "type": "integer", "minimum": 1 },
+        "creation_batch_size": { "type": "integer", "minimum": 1 },
+        "login_batch_size": { "type": "integer", "minimum": 1 },
+        "max_active_per_map": { "type": "integer", "minimum": 1 },
+        "max_active_per_zone": { "type": "integer", "minimum": 1 },
+        "max_active_per_starting_region": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "progression_hold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_activities",
+        "bank_xp",
+        "delevel_on_demotion",
+        "denied_progression_mutations",
+        "unknown_activity"
+      ],
+      "properties": {
+        "allowed_activities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/heldActivity" }
+        },
+        "bank_xp": { "const": false },
+        "delevel_on_demotion": { "const": false },
+        "denied_progression_mutations": {
+          "const": [
+            "banked_xp",
+            "quest_accept",
+            "quest_complete",
+            "quest_objective_credit",
+            "quest_reward",
+            "quest_script_complete",
+            "quest_turn_in",
+            "xp_award"
+          ]
+        },
+        "unknown_activity": { "const": "deny" }
+      }
+    },
+    "failure_policy": {
+      "const": {
+        "invalid_snapshot": "reject",
+        "missing_snapshot": "fail_closed",
+        "runtime_reload_failure": "retain_last_verified_or_fail_closed"
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+    "heldActivity": {
+      "enum": [
+        "combat_farming",
+        "crafting",
+        "eligible_dungeon",
+        "fishing",
+        "gathering",
+        "gear_improvement",
+        "mail",
+        "phase_safe_travel",
+        "profession_training",
+        "repair",
+        "social",
+        "trade"
+      ]
+    }
+  }
+}

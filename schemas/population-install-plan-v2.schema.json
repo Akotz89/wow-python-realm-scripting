@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-install-plan-v2.schema.json",
+  "title": "Owner-independent immutable population installation plan v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "installation_digest",
+    "installation_schema",
+    "installation_version",
+    "manifest_identities",
+    "owner_state",
+    "realm_id",
+    "schedule",
+    "source_digests",
+    "waves"
+  ],
+  "properties": {
+    "installation_schema": { "const": 2 },
+    "installation_version": { "$ref": "#/$defs/token" },
+    "installation_digest": { "$ref": "#/$defs/digest" },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_digest", "policy_digest", "schedule_digest", "snapshot_digest"],
+      "properties": {
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "policy_digest": { "$ref": "#/$defs/digest" },
+        "schedule_digest": { "$ref": "#/$defs/digest" },
+        "snapshot_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["global_phase_cap", "maximum_owner_level", "permanent_roster_target", "schedule_version"],
+      "properties": {
+        "global_phase_cap": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "maximum_owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "permanent_roster_target": { "type": "integer", "minimum": 1 },
+        "schedule_version": { "$ref": "#/$defs/token" }
+      }
+    },
+    "owner_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_state", "current_epoch", "generation", "highest_owner_level_seen"],
+      "properties": {
+        "binding_state": { "const": "unbound" },
+        "current_epoch": { "const": 1 },
+        "generation": { "const": 1 },
+        "highest_owner_level_seen": { "const": 1 }
+      }
+    },
+    "waves": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["initial_state", "owner_level", "planned_count", "wave_idempotency_key"],
+        "properties": {
+          "initial_state": { "enum": ["authorized", "planned"] },
+          "owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+          "planned_count": { "type": "integer", "minimum": 0 },
+          "wave_idempotency_key": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "manifest_identities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account_manifest_size",
+          "account_name",
+          "admission_eligible",
+          "appearance",
+          "character_name",
+          "class",
+          "faction",
+          "manifest_identity",
+          "owner_level",
+          "race",
+          "role_intent",
+          "spec_template",
+          "starting_region",
+          "wave_idempotency_key",
+          "wave_ordinal"
+        ],
+        "properties": {
+          "account_manifest_size": { "type": "integer", "minimum": 1, "maximum": 9 },
+          "account_name": { "$ref": "#/$defs/token" },
+          "admission_eligible": { "type": "boolean" },
+          "appearance": { "$ref": "#/$defs/appearance" },
+          "character_name": { "type": "string", "pattern": "^[A-Za-z]{2,12}$" },
+          "class": { "enum": [1, 2, 3, 4, 5, 7, 8, 9, 11] },
+          "faction": { "enum": ["alliance", "horde"] },
+          "manifest_identity": { "$ref": "#/$defs/token" },
+          "owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+          "race": { "type": "integer", "minimum": 1, "maximum": 11 },
+          "role_intent": { "enum": ["damage", "healer", "tank"] },
+          "spec_template": { "$ref": "#/$defs/token" },
+          "starting_region": { "$ref": "#/$defs/token" },
+          "wave_idempotency_key": { "$ref": "#/$defs/digest" },
+          "wave_ordinal": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "appearance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["face", "facial_hair", "gender", "hair_color", "hair_style", "outfit_id", "skin"],
+      "properties": {
+        "face": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "facial_hair": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "gender": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "hair_color": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "hair_style": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "outfit_id": { "const": 0 },
+        "skin": { "type": "integer", "minimum": 0, "maximum": 255 }
+      }
+    },
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" }
+  }
+}

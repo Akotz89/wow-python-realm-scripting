@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.playerbots.invalid/schemas/population-admission-reconciliation-v1.schema.json",
+  "title": "Fresh-realm population admission reconciliation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "admission_control",
+    "binding_count",
+    "blocked_identities",
+    "candidate_batch",
+    "decision",
+    "earliest_pending_wave",
+    "owner_anchor_guid",
+    "owner_state",
+    "pending_wave_levels",
+    "realm_id",
+    "reconciliation_digest",
+    "reconciliation_schema",
+    "reconciliation_version",
+    "runtime_commit_required",
+    "source_digests",
+    "total_due_count",
+    "wave_states"
+  ],
+  "properties": {
+    "reconciliation_schema": { "const": 1 },
+    "reconciliation_version": { "$ref": "#/$defs/token" },
+    "reconciliation_digest": { "$ref": "#/$defs/digest" },
+    "realm_id": { "$ref": "#/$defs/token" },
+    "source_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_digest",
+        "manifest_digest",
+        "policy_digest",
+        "schedule_digest",
+        "snapshot_digest"
+      ],
+      "properties": {
+        "binding_digest": { "$ref": "#/$defs/digest" },
+        "manifest_digest": { "$ref": "#/$defs/digest" },
+        "policy_digest": { "$ref": "#/$defs/digest" },
+        "schedule_digest": { "$ref": "#/$defs/digest" },
+        "snapshot_digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "owner_anchor_guid": { "type": "integer", "minimum": 1 },
+    "owner_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_epoch",
+        "newly_authorized_levels",
+        "observed_owner_level",
+        "previous_highest_owner_level_seen",
+        "resulting_highest_owner_level_seen"
+      ],
+      "properties": {
+        "observed_owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "previous_highest_owner_level_seen": { "type": "integer", "minimum": 0, "maximum": 80 },
+        "resulting_highest_owner_level_seen": { "type": "integer", "minimum": 1, "maximum": 80 },
+        "newly_authorized_levels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 1, "maximum": 80 }
+        },
+        "current_epoch": { "type": "integer", "minimum": 1, "maximum": 80 }
+      }
+    },
+    "admission_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admissions_paused",
+        "available_creation_slots",
+        "creation_batch_size",
+        "pause_reason"
+      ],
+      "properties": {
+        "admissions_paused": { "type": "boolean" },
+        "pause_reason": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/token" }
+          ]
+        },
+        "available_creation_slots": { "type": "integer", "minimum": 0 },
+        "creation_batch_size": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "binding_count": { "type": "integer", "minimum": 0 },
+    "total_due_count": { "type": "integer", "minimum": 0 },
+    "pending_wave_levels": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "integer", "minimum": 1, "maximum": 80 }
+    },
+    "earliest_pending_wave": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "integer", "minimum": 1, "maximum": 80 }
+      ]
+    },
+    "wave_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admitted_count",
+          "idempotency_key",
+          "ineligible_remaining",
+          "owner_level",
+          "planned_count",
+          "remaining_count",
+          "state"
+        ],
+        "properties": {
+          "owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+          "planned_count": { "type": "integer", "minimum": 0 },
+          "admitted_count": { "type": "integer", "minimum": 0 },
+          "remaining_count": { "type": "integer", "minimum": 0 },
+          "ineligible_remaining": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/token" }
+          },
+          "state": { "enum": ["active", "admitting", "authorized", "blocked"] },
+          "idempotency_key": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "decision": {
+      "enum": ["admit_batch", "blocked_ineligible", "capacity_hold", "noop", "paused"]
+    },
+    "blocked_identities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/token" }
+    },
+    "candidate_batch": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["creation_wave_owner_level", "manifest_identity", "wave_ordinal"],
+        "properties": {
+          "manifest_identity": { "$ref": "#/$defs/token" },
+          "creation_wave_owner_level": { "type": "integer", "minimum": 1, "maximum": 80 },
+          "wave_ordinal": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "runtime_commit_required": { "const": true }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "token": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" }
+  }
+}
