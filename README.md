@@ -23,6 +23,14 @@ to the actual candidate source tree. Without it they use the existing project
 work path; missing source fails those checks. Passing a path does not prove the
 candidate is accepted or deployed.
 
+## Public CI scope
+
+Public CI runs lint, type checking, and the self-contained Python tests for
+release construction, loading, population policy inputs, release control, and
+manifest validation. It does not run the tests that require the separate WoW
+project, retained historical contract inputs, or native candidate source. A
+passing CI run does not establish integration, deployment, or gameplay acceptance.
+
 ## Development workflow
 
 Create the isolated tool environment and run every local gate:

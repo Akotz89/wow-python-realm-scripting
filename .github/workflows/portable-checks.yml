@@ -1,0 +1,32 @@
+name: Portable Python checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  portable:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install development dependencies
+        run: python -m pip install -r requirements-dev.lock
+      - name: Lint and type check
+        run: |
+          python -m ruff check .
+          python -m mypy
+      - name: Run self-contained tests
+        run: >-
+          python -m pytest -q
+          tests/test_build_release.py
+          tests/test_loader.py
+          tests/test_population_band_policy.py
+          tests/test_population_capacity_policy.py
+          tests/test_population_first_wave_coupling.py
+          tests/test_release_ctl.py
+          tests/test_release_contract.py::test_source_contract_rejects_authority_mutation
+          tests/test_release_contract.py::test_manifest_rejects_enabled_embedded_python
