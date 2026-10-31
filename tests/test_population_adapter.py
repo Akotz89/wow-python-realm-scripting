@@ -22,7 +22,7 @@ from realm_scripts.release_contract import CPI225_RELEASE_SURFACE_SHA256, expect
 REPOSITORY_ROOT = Path(os.environ.get("WOW_PROJECT_ROOT", Path(__file__).resolve().parents[3]))
 CPI196_CANDIDATE_PATH = (
     REPOSITORY_ROOT
-    / "research/evidence/cpi-196/identity-independent-manifest-candidate-v1/candidate-manifest.json"
+    / "integration/cpi-196/contracts/identity-independent-manifest-candidate-v1/candidate-manifest.json"
 )
 
 
